@@ -16,7 +16,7 @@ print(end_date)
 stock_symbol = input('Enter stock symbol:')
 stock_symbols = [stock_symbol]
 
-data = get_my_portfolio('moex', stock_symbols, start_date, end_date)
+data = get_my_portfolio(stock_symbols, start_date, end_date)
 
 sma_data = get_sma_data(data)
 
