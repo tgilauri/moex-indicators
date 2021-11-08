@@ -9,12 +9,16 @@ plt.style.use('fivethirtyeight')
 yf.pdr_override()
 
 
-def get_bb_data(data):
+def prepare_data(data):
+    bb = ta.bbands(data['close'], length=20, std=2)
+    data[bb.name] = bb
+    return data
+
+
+def strategy(data):
     bb_buy = []
     bb_sell = []
     position = False
-    bb = ta.bbands(data['close'], length=20, std=2)
-    data = pd.concat([data, bb], axis=1).reindex(data.index)
 
     for i in range(len(data)):
         if data['close'][i] < data['BBL_20_2.0'][i]:
@@ -41,6 +45,11 @@ def get_bb_data(data):
     data['bb_Sell_Signal_price'] = bb_sell
 
     return data
+
+
+def get_bb_data(data):
+    bb_data = prepare_data(data)
+    return strategy(bb_data)
 
 
 def draw_bb(data, stocksymbols):

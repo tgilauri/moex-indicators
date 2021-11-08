@@ -10,7 +10,11 @@ yf.pdr_override()
 
 
 def get_macd_concat_data(data):
-    return pd.concat([data, ta.macd(data['close'])], axis=1).reindex(data.index)
+    macd_data = ta.macd(data['close'])
+    data['MACD_12_26_9'] = macd_data['MACD_12_26_9']
+    data['MACDh_12_26_9'] = macd_data['MACDh_12_26_9']
+    data['MACDs_12_26_9'] = macd_data['MACDs_12_26_9']
+    return data
 
 
 def macd_strategy(data, risk):
@@ -34,11 +38,11 @@ def macd_strategy(data, risk):
                 position = False
             else:
                 macd_sell.append(np.nan)
-        elif position == True and data['close'][i] < macd_buy[-1] * (1 - risk):
+        elif position and data['close'][i] < macd_buy[-1] * (1 - risk):
             macd_sell.append(data["close"][i])
             macd_buy.append(np.nan)
             position = False
-        elif position == True and data['close'][i] < data['close'][i - 1] * (1 - risk):
+        elif position and data['close'][i] < data['close'][i - 1] * (1 - risk):
             macd_sell.append(data["close"][i])
             macd_buy.append(np.nan)
             position = False
@@ -81,7 +85,6 @@ def draw_macd(data, stocksymbols):
     ax1.legend()
     ax1.grid()
     ax1.set_xlabel('Date', fontsize=8)
-
 
     ax2 = plt.subplot2grid((14, 12), (10, 0), rowspan=6, colspan=14)
     ax2.set_ylabel('MACD', fontsize=8)
